@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+  
+
+</head>
+<body>
+  <!-- Buttons -->
+  <button id="createWeatherBtn">New Weather</button>
+  <button id="createRSSBtn">New RSS Feed</button>
+
+  <!-- Create Weather Modal -->
+  <div id="weather-modal" class="modal">
+    <!-- Weather Modal Content -->
+    <div class="weather-modal-content modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Create New Weather Widget</h2>
+      </div>
+      <div>
+        <input type="text" id="weather-search-text" placeholder="City, Country Code">
+        <button id="weather-search-submit"><i class="fa fa-search"></i></button>
+      </div>
+      <div id="citylist">
+        <form action="" id="citylist-form">
+        </form>
+      </div>
+      <div>
+        <button id="add-weather-widget">Add Weather Widget</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create RSS Modal -->
+  <div id="rss-modal" class="modal">
+    <!-- RSS Modal Content -->
+    <div class="rss-modal-content modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Create New RSS Feed Widget</h2>
+      </div>
+      <div>
+        <input type="text" id="rss-input" placeholder="RSS Link">
+      </div>
+      <div>
+        <button id="add-rss-widget">Add RSS Feed Widget</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- DIV for the widgets -->
+  <div id="widget-div" class="widget-div">
+    
+  </div>
+
+
+  
+</body>
+<script src="app.js"></script>
+</html>
