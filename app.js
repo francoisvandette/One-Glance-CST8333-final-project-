@@ -58,12 +58,12 @@ close[1].onclick = function () {
   closeModals();
 }
 
-  // When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-  if (event.target == weatherModal || event.target == rssModal) {
-    closeModals();
-  }
-}
+//   // When the user clicks anywhere outside of the modal, close it
+// window.onclick = function (event) {
+//   if (event.target == weatherModal || event.target == rssModal) {
+//     closeModals();
+//   }
+// }
 
 
 // Location Search executes
@@ -172,16 +172,16 @@ function renderWeatherWidget(obj) {
   let cdesc = document.createElement("p");
   let cicon = document.createElement("img");
 
-  master.classList.add("master", obj.id);
-  header.classList.add("header", obj.id);
-  hcity.classList.add("cityname", obj.id);
-  content.classList.add("content", obj.id);
-  ctemp.classList.add("current-temp", obj.id);
-  cfeels_like.classList.add("feels-temp", obj.id);
-  ctemp_max.classList.add("max-temp", obj.id);
-  ctemp_min.classList.add("min-temp", obj.id);
-  cdesc.classList.add("description", obj.id);
-  cicon.classList.add("icon", obj.id);
+  master.classList.add("master", "weather", obj.id);
+  header.classList.add("header", "weather", obj.id);
+  hcity.classList.add("cityname", "weather", obj.id);
+  content.classList.add("content", "weather", obj.id);
+  ctemp.classList.add("current-temp", "weather", obj.id);
+  cfeels_like.classList.add("feels-temp", "weather", obj.id);
+  ctemp_max.classList.add("max-temp", "weather", obj.id);
+  ctemp_min.classList.add("min-temp", "weather", obj.id);
+  cdesc.classList.add("description", "weather", obj.id);
+  cicon.classList.add("icon", "weather", obj.id);
 
   header.appendChild(hcity);
   content.appendChild(ctemp);
@@ -193,6 +193,9 @@ function renderWeatherWidget(obj) {
   master.appendChild(header);
   master.appendChild(content);
   tableau.appendChild(master);
+
+  let mlist = document.querySelectorAll(".master");
+  dragElement(mlist[mlist.length-1]);
 }
 
 function updateWeatherWidget(obj) {
@@ -217,7 +220,59 @@ function updateWeatherWidget(obj) {
     document.getElementsByClassName("description " + obj.id)[0].innerHTML = "Conditions: "+description.charAt(0).toUpperCase() + description.slice(1);
     document.getElementsByClassName("icon " + obj.id)[0].src = "https://openweathermap.org/img/wn/"+icon+"@2x.png";
   }
-  
+}
 
+// dragElement(document.querySelector('.rateRecipe.btns-one-small').click());
 
+// window.onclick = function (e) {
+//   let classClick = e.srcElement.className;
+//   console.log(e.srcElement.className); // then e.srcElement.className has the class
+//   console.log(e); // then e.srcElement.className has the class
+//   if (classClick.includes("cityname" || "header")) {
+//     dragElement(document.getElementsByClassName(classClick));
+//     console.log("true");
+//   } else {
+//     console.log("false");
+//   }
+// }
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    // if present, the header is where you move the DIV from:
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    // stop moving when mouse button is released:
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
 }
