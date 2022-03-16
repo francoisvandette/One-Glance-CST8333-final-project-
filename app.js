@@ -12,7 +12,7 @@ var form = document.getElementById("citylist-form");
 var createWeatherBtn = document.querySelector("#add-weather-widget");
 const unitChoice = "metric";
 const weatherLink = "https://api.openweathermap.org/data/2.5/weather?units="+unitChoice+"&appid=1d957e1fec787ba103363bc5e34d7f19&";
-const widgets = [];
+let widgets = [];
 const units = {
   metric: {
     temp: "°C",
@@ -25,10 +25,21 @@ const units = {
 }
 
 window.onload = function () {
-  if (typeof localStorage.getItem('widgets') == "undefined") {
-    localStorage.setItem('widgets', widgets);
+  getLocalStorageWidgets();
+  for(let i = 0; i < widgets.length; i++) {
+    renderWeatherWidget(widgets[i]);
+    updateWeatherWidget(widgets[i]);
   }
-  localStorage.getItem('widgets');
+  scanClose();
+}
+
+function saveWidgets() {
+  localStorage.setItem("widgets", JSON.stringify(widgets));
+}
+
+function getLocalStorageWidgets() {
+  widgets = JSON.parse(localStorage.getItem("widgets") || "[]");
+  return widgets;
 }
 
 /*
@@ -57,6 +68,21 @@ close[0].onclick = function () {
 close[1].onclick = function () {
   closeModals();
 }
+
+function scanClose() {
+  document.querySelectorAll(".close-widget").forEach(item => {
+    item.addEventListener('click', event => {
+      let e = window.event;
+      let objNum = e.srcElement.classList[2];
+      let node = document.getElementsByClassName("master "+objNum);
+      node[0].parentNode.removeChild(node[0]);
+      let delWidgetIndex = widgets.findIndex(o => o.id == objNum);
+      widgets.splice(delWidgetIndex, 1);
+      saveWidgets();
+    })
+  })
+}
+
 
 //   // When the user clicks anywhere outside of the modal, close it
 // window.onclick = function (event) {
@@ -146,12 +172,14 @@ createWeatherBtn.onclick = function () {
     id: id,
     link: newWeatherLink,
     type: "weather", 
-    cityname: document.querySelector(`input[name="citydata"]:checked`).id
+    cityname: document.querySelector(`input[name="citydata"]:checked`).id,
+    top: 50,
+    left: 10
   }
 
   // store the object into the widgets array & save it
   widgets.push(obj);
-  localStorage.setItem("widgets", widgets);
+  saveWidgets();
 
   // display that weather object in the html
   renderWeatherWidget(obj);
@@ -163,6 +191,7 @@ function renderWeatherWidget(obj) {
   let tableau = document.querySelector("#widget-div");
   let master = document.createElement("div");
   let header = document.createElement("div");
+  let closeBtn = document.createElement("span");
   let hcity = document.createElement("h3");
   let content = document.createElement("div");
   let ctemp = document.createElement("p");
@@ -174,6 +203,8 @@ function renderWeatherWidget(obj) {
 
   master.classList.add("master", "weather", obj.id);
   header.classList.add("header", "weather", obj.id);
+  closeBtn.classList.add("close-widget", "weather", obj.id);
+  closeBtn.innerHTML = "&times;";
   hcity.classList.add("cityname", "weather", obj.id);
   content.classList.add("content", "weather", obj.id);
   ctemp.classList.add("current-temp", "weather", obj.id);
@@ -183,6 +214,10 @@ function renderWeatherWidget(obj) {
   cdesc.classList.add("description", "weather", obj.id);
   cicon.classList.add("icon", "weather", obj.id);
 
+  master.style.top = obj.top + "px";
+  master.style.left = obj.left + "px";
+
+  header.appendChild(closeBtn);
   header.appendChild(hcity);
   content.appendChild(ctemp);
   content.appendChild(cfeels_like);
@@ -196,6 +231,7 @@ function renderWeatherWidget(obj) {
 
   let mlist = document.querySelectorAll(".master");
   dragElement(mlist[mlist.length-1]);
+  scanClose();
 }
 
 function updateWeatherWidget(obj) {
@@ -208,7 +244,7 @@ function updateWeatherWidget(obj) {
     ;
 
   function wUpdate(weatherInfo, obj) {
-    let { name } = weatherInfo;
+    // let { name } = weatherInfo;
     let { description, icon } = weatherInfo.weather[0];
     let { temp, feels_like, temp_max, temp_min } = weatherInfo.main;
 
@@ -238,13 +274,13 @@ function updateWeatherWidget(obj) {
 
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    // if present, the header is where you move the DIV from:
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    // otherwise, move the DIV from anywhere inside the DIV:
-    elmnt.onmousedown = dragMouseDown;
-  }
+  // if (document.getElementById(elmnt.id + "header")) {
+  //   // if present, the header is where you move the DIV from:
+  //   document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  // } else {
+  //   // otherwise, move the DIV from anywhere inside the DIV:
+  elmnt.onmousedown = dragMouseDown;
+  // }
 
   function dragMouseDown(e) {
     e = e || window.event;
@@ -268,11 +304,19 @@ function dragElement(elmnt) {
     // set the element's new position:
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+
+    // storing the widget location in the 'widget' array
+    let objNum = e.srcElement.classList[2];
+    let updateWidgetPosition = widgets.find(o => o.id == objNum);
+    updateWidgetPosition.top = elmnt.offsetTop - pos2;
+    updateWidgetPosition.left = elmnt.offsetLeft - pos1;
+    saveWidgets();
   }
 
   function closeDragElement() {
     // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
+    // console.log("mouse button up");
   }
 }
