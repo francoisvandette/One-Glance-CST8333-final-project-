@@ -24,27 +24,40 @@ const units = {
   }
 }
 
+
+
+// Initial actions when the page loads
 window.onload = function () {
+  // gets any stored widgets from localStorage
   getLocalStorageWidgets();
+
+  // loops through the returned array
   for(let i = 0; i < widgets.length; i++) {
+    // loads the widget container for any stored weather widgets
     renderWeatherWidget(widgets[i]);
+    // updates those weather wdigets
     updateWeatherWidget(widgets[i]);
   }
+
+  // adds the ability to close the weather widgets
   scanClose();
 }
 
+// function saves the "widgets" array to localStorage as "widgets"
 function saveWidgets() {
   localStorage.setItem("widgets", JSON.stringify(widgets));
 }
 
+// function gets any widgets from localStorage
 function getLocalStorageWidgets() {
   widgets = JSON.parse(localStorage.getItem("widgets") || "[]");
-  return widgets;
 }
 
+
+
 /*
-* Modal Functions
-*/
+ *   Modal Functions
+ */
 // Display Create Weather Modal
 weatherBtn.onclick = function () {
   weatherModal.style.display = "block";
@@ -61,7 +74,7 @@ function closeModals() {
   rssModal.style.display = "none";
 }
 
-  // When the user clicks on <span> (x), close the modal
+  // Functionality to close the modals via the X
 close[0].onclick = function () {
   closeModals();
 }
@@ -69,28 +82,27 @@ close[1].onclick = function () {
   closeModals();
 }
 
+// Function to allow Widgets to be closed and deleted
 function scanClose() {
   document.querySelectorAll(".close-widget").forEach(item => {
     item.addEventListener('click', event => {
+      // grabs the window.event so we can get the classList of element we clicked on
       let e = window.event;
+      // the 3rd class is the unique ID of the widget
       let objNum = e.srcElement.classList[2];
+      // gets the master div of the widget we are deleting
       let node = document.getElementsByClassName("master "+objNum);
+      // removes the master div from the HTML
       node[0].parentNode.removeChild(node[0]);
+      // get the "widget" array index of the widget we are deleting
       let delWidgetIndex = widgets.findIndex(o => o.id == objNum);
+      // deletes the widget from the array
       widgets.splice(delWidgetIndex, 1);
+      // saves the array to localStorage
       saveWidgets();
     })
   })
 }
-
-
-//   // When the user clicks anywhere outside of the modal, close it
-// window.onclick = function (event) {
-//   if (event.target == weatherModal || event.target == rssModal) {
-//     closeModals();
-//   }
-// }
-
 
 // Location Search executes
   // hitting enter
@@ -106,7 +118,9 @@ weatherSearchSubmit.onclick = function() {
 }
 
 function locationSearch() {
+  // grabbing the searchbar value
   let loc = weatherSearchText.value;
+  // creating the API link
   let templink = geolocationLink + loc;
 
   // delete existing contents of form
@@ -124,7 +138,7 @@ function locationSearch() {
   function addFormItems(citydata) {
 
     for (let i in citydata) {
-      // grabbing the variables needed
+      // grabbing the variables needed from the JSON
       let { name, state, country, lat, lon } = citydata[i];
       // creating the city name from the returned city, state, & country info
       let cityname = name + ", " + state + ", " + country;
@@ -154,20 +168,14 @@ function locationSearch() {
 
 let weatherInfo;
 createWeatherBtn.onclick = function () {
-  //grab the selected city from the city selection form & creating a link for the weather api
+  // grab the selected city from the city selection form
   let cityCoords = document.querySelector(`input[name="citydata"]:checked`).value;
+  // creating a link for the weather api
   let newWeatherLink = weatherLink + cityCoords;
   // creating a unique ID for this widget
   let id = Date.now().toString();
-  
-  // fetching the weather JSON
-  // fetch(newWeatherLink)
-  //   .then((response) => response.json())
-  //   .then((data) => weatherInfo = data)
-  //   .then(() => console.log(weatherInfo))
-  //   ;
     
-  //create a weather object
+  //create a weather object to save it
   let obj = {
     id: id,
     link: newWeatherLink,
@@ -181,14 +189,25 @@ createWeatherBtn.onclick = function () {
   widgets.push(obj);
   saveWidgets();
 
-  // display that weather object in the html
+  // display this weather widget in the html
   renderWeatherWidget(obj);
   updateWeatherWidget(obj);
+
+  // closing the modal
   closeModals();
 }
 
+
+
+/*
+ * Weather Widget Functions 
+ */
+
 function renderWeatherWidget(obj) {
+  // getting the destination div of the widget
   let tableau = document.querySelector("#widget-div");
+
+  // creating the elements
   let master = document.createElement("div");
   let header = document.createElement("div");
   let closeBtn = document.createElement("span");
@@ -201,10 +220,10 @@ function renderWeatherWidget(obj) {
   let cdesc = document.createElement("p");
   let cicon = document.createElement("img");
 
+  // assigning classes to the elements
   master.classList.add("master", "weather", obj.id);
   header.classList.add("header", "weather", obj.id);
   closeBtn.classList.add("close-widget", "weather", obj.id);
-  closeBtn.innerHTML = "&times;";
   hcity.classList.add("cityname", "weather", obj.id);
   content.classList.add("content", "weather", obj.id);
   ctemp.classList.add("current-temp", "weather", obj.id);
@@ -214,23 +233,35 @@ function renderWeatherWidget(obj) {
   cdesc.classList.add("description", "weather", obj.id);
   cicon.classList.add("icon", "weather", obj.id);
 
+  // assigning an initial position
   master.style.top = obj.top + "px";
   master.style.left = obj.left + "px";
 
+  // setting text content for the close button
+  closeBtn.innerHTML = "&times;";
+
+  // shoving everything into its proper parent
+    // filling the header div
   header.appendChild(closeBtn);
   header.appendChild(hcity);
+    // filling the content div
   content.appendChild(ctemp);
   content.appendChild(cfeels_like);
   content.appendChild(ctemp_max);
   content.appendChild(ctemp_min);
   content.appendChild(cdesc);
   content.appendChild(cicon);
+    // placing the header & content divs into the master div
   master.appendChild(header);
   master.appendChild(content);
+    // adding the master div into the widgets div already in index.html
   tableau.appendChild(master);
 
+  // making the latest (this) master div a movable HTML element
   let mlist = document.querySelectorAll(".master");
   dragElement(mlist[mlist.length-1]);
+
+  // giving the widget the ability to close
   scanClose();
 }
 
@@ -243,11 +274,13 @@ function updateWeatherWidget(obj) {
     .then(() => wUpdate(weatherInfo, obj))
     ;
 
+    // updating the proper weather widget fields
   function wUpdate(weatherInfo, obj) {
-    // let { name } = weatherInfo;
+    // getting the desired information from the JSON
     let { description, icon } = weatherInfo.weather[0];
     let { temp, feels_like, temp_max, temp_min } = weatherInfo.main;
 
+    // grabbing the appropriate HTML elements to set the text or img src
     document.getElementsByClassName("cityname " + obj.id)[0].innerHTML = obj.cityname;
     document.getElementsByClassName("current-temp " + obj.id)[0].innerHTML = "Current: " + temp + units[unitChoice].temp;
     document.getElementsByClassName("feels-temp " + obj.id)[0].innerHTML = "Feels Like: " + feels_like + units[unitChoice].temp;
@@ -258,65 +291,54 @@ function updateWeatherWidget(obj) {
   }
 }
 
-// dragElement(document.querySelector('.rateRecipe.btns-one-small').click());
 
-// window.onclick = function (e) {
-//   let classClick = e.srcElement.className;
-//   console.log(e.srcElement.className); // then e.srcElement.className has the class
-//   console.log(e); // then e.srcElement.className has the class
-//   if (classClick.includes("cityname" || "header")) {
-//     dragElement(document.getElementsByClassName(classClick));
-//     console.log("true");
-//   } else {
-//     console.log("false");
-//   }
-// }
+
+/*
+ *  Moveable WIdgets functions
+ */
 
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  // if (document.getElementById(elmnt.id + "header")) {
-  //   // if present, the header is where you move the DIV from:
-  //   document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  // } else {
-  //   // otherwise, move the DIV from anywhere inside the DIV:
   elmnt.onmousedown = dragMouseDown;
-  // }
 
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
-    // get the mouse cursor position at startup:
+    // get the mouse cursor position at startup
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
+    // call elementDrag() whenever the cursor moves
     document.onmousemove = elementDrag;
   }
 
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
-    // calculate the new cursor position:
+    // calculate the new cursor position
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    // set the element's new position:
+    // set the element's new position
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
 
     // storing the widget location in the 'widget' array
+      // grabs the 3rd class, which should be the widget's ID
     let objNum = e.srcElement.classList[2];
+      // gets the index of the object in the widgets array
     let updateWidgetPosition = widgets.find(o => o.id == objNum);
+      // updates the position values (top & left) into the widgets array
     updateWidgetPosition.top = elmnt.offsetTop - pos2;
     updateWidgetPosition.left = elmnt.offsetLeft - pos1;
+      // saves the widgets array to localStorage
     saveWidgets();
   }
 
   function closeDragElement() {
-    // stop moving when mouse button is released:
+    // stop moving when mouse button is released
     document.onmouseup = null;
     document.onmousemove = null;
-    // console.log("mouse button up");
   }
 }
