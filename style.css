@@ -60,6 +60,7 @@ button {
   background-color: #ffffff;
   border: 1px solid #d3d3d3;
   text-align: center;
+  width: fit-content;
 }
 
 .master.weather {
@@ -84,8 +85,15 @@ button {
   background-color: #8f8f8f;
   color: #fff;
   cursor: move;
+  width: fit-content;
 }
 
 .cityname {
   cursor: move;
+}
+
+.close-widget {
+  border: 1px solid black;
+  color: black;
+  background-color: #FFFFFF;
 }

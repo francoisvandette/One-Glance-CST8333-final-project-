@@ -1,4 +1,3 @@
-// Modal Variables
 var weatherModal = document.getElementById("weather-modal");
 var rssModal = document.getElementById("rss-modal");
 var weatherBtn = document.getElementById("createWeatherBtn");
@@ -26,7 +25,10 @@ const units = {
 
 
 
-// Initial actions when the page loads
+/*
+ * Initial actions when the page loads
+ */
+
 window.onload = function () {
   // gets any stored widgets from localStorage
   getLocalStorageWidgets();
@@ -38,9 +40,6 @@ window.onload = function () {
     // updates those weather wdigets
     updateWeatherWidget(widgets[i]);
   }
-
-  // adds the ability to close the weather widgets
-  scanClose();
 }
 
 // function saves the "widgets" array to localStorage as "widgets"
@@ -58,6 +57,7 @@ function getLocalStorageWidgets() {
 /*
  *   Modal Functions
  */
+
 // Display Create Weather Modal
 weatherBtn.onclick = function () {
   weatherModal.style.display = "block";
@@ -74,34 +74,12 @@ function closeModals() {
   rssModal.style.display = "none";
 }
 
-  // Functionality to close the modals via the X
+// Functionality to close the modals via the X
 close[0].onclick = function () {
   closeModals();
 }
 close[1].onclick = function () {
   closeModals();
-}
-
-// Function to allow Widgets to be closed and deleted
-function scanClose() {
-  document.querySelectorAll(".close-widget").forEach(item => {
-    item.addEventListener('click', event => {
-      // grabs the window.event so we can get the classList of element we clicked on
-      let e = window.event;
-      // the 3rd class is the unique ID of the widget
-      let objNum = e.srcElement.classList[2];
-      // gets the master div of the widget we are deleting
-      let node = document.getElementsByClassName("master "+objNum);
-      // removes the master div from the HTML
-      node[0].parentNode.removeChild(node[0]);
-      // get the "widget" array index of the widget we are deleting
-      let delWidgetIndex = widgets.findIndex(o => o.id == objNum);
-      // deletes the widget from the array
-      widgets.splice(delWidgetIndex, 1);
-      // saves the array to localStorage
-      saveWidgets();
-    })
-  })
 }
 
 // Location Search executes
@@ -203,6 +181,7 @@ createWeatherBtn.onclick = function () {
  * Weather Widget Functions 
  */
 
+// creates the divs and other HTML tags needed for a weather widget
 function renderWeatherWidget(obj) {
   // getting the destination div of the widget
   let tableau = document.querySelector("#widget-div");
@@ -211,7 +190,7 @@ function renderWeatherWidget(obj) {
   let master = document.createElement("div");
   let header = document.createElement("div");
   let closeBtn = document.createElement("span");
-  let hcity = document.createElement("h3");
+  let hcity = document.createElement("p");
   let content = document.createElement("div");
   let ctemp = document.createElement("p");
   let cfeels_like = document.createElement("p");
@@ -242,8 +221,8 @@ function renderWeatherWidget(obj) {
 
   // shoving everything into its proper parent
     // filling the header div
-  header.appendChild(closeBtn);
   header.appendChild(hcity);
+  header.appendChild(closeBtn);
     // filling the content div
   content.appendChild(ctemp);
   content.appendChild(cfeels_like);
@@ -265,6 +244,7 @@ function renderWeatherWidget(obj) {
   scanClose();
 }
 
+// updates a weather widget using an object, usually from the widgets array
 function updateWeatherWidget(obj) {
   // fetch current weather information
   let weatherInfo;
@@ -274,13 +254,13 @@ function updateWeatherWidget(obj) {
     .then(() => wUpdate(weatherInfo, obj))
     ;
 
-    // updating the proper weather widget fields
+  // updating the proper weather widget fields
   function wUpdate(weatherInfo, obj) {
     // getting the desired information from the JSON
     let { description, icon } = weatherInfo.weather[0];
     let { temp, feels_like, temp_max, temp_min } = weatherInfo.main;
 
-    // grabbing the appropriate HTML elements to set the text or img src
+    // grabbing the appropriate HTML elements to set the text or img src, there should be only one element returned
     document.getElementsByClassName("cityname " + obj.id)[0].innerHTML = obj.cityname;
     document.getElementsByClassName("current-temp " + obj.id)[0].innerHTML = "Current: " + temp + units[unitChoice].temp;
     document.getElementsByClassName("feels-temp " + obj.id)[0].innerHTML = "Feels Like: " + feels_like + units[unitChoice].temp;
@@ -291,12 +271,35 @@ function updateWeatherWidget(obj) {
   }
 }
 
+// Function to allow Widgets to be closed and deleted
+function scanClose() {
+  document.querySelectorAll(".close-widget").forEach(item => {
+    item.addEventListener('click', event => {
+      // grabs the window.event so we can get the classList of element we clicked on
+      let e = window.event;
+      // the 3rd class is the unique ID of the widget
+      let objNum = e.srcElement.classList[2];
+      // gets the master div of the widget we are deleting
+      let node = document.getElementsByClassName("master " + objNum);
+      // removes the master div from the HTML
+      node[0].parentNode.removeChild(node[0]);
+      // get the "widget" array index of the widget we are deleting
+      let delWidgetIndex = widgets.findIndex(o => o.id == objNum);
+      // deletes the widget from the array
+      widgets.splice(delWidgetIndex, 1);
+      // saves the array to localStorage
+      saveWidgets();
+    })
+  })
+}
+
 
 
 /*
- *  Moveable WIdgets functions
+ *  Moveable Widgets functions
  */
 
+// main function, you shove the HTML element meant to be moveable
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   elmnt.onmousedown = dragMouseDown;
