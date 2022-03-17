@@ -190,7 +190,7 @@ function renderWeatherWidget(obj) {
   let master = document.createElement("div");
   let header = document.createElement("div");
   let closeBtn = document.createElement("span");
-  let hcity = document.createElement("p");
+  let hcity = document.createElement("h3");
   let content = document.createElement("div");
   let ctemp = document.createElement("p");
   let cfeels_like = document.createElement("p");
