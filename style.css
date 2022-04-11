@@ -59,16 +59,17 @@ button {
   z-index: 9;
   background-color: #ffffff;
   border: 1px solid #d3d3d3;
-  text-align: center;
+  /* text-align: center; */
   width: fit-content;
 }
 
-.master.weather {
-  cursor: move;
+.content {
+  text-align: center;
 }
 
 .master.rss {
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
   /* resize: both; */
   /* max-width: 300px; */
   /* max-height: 460px; */
@@ -76,6 +77,22 @@ button {
   /* min-width: 50px; */
   /* min-height: 50px; */
   /* background-color: skyblue; */
+}
+
+/* .content.rss {
+  float: left;
+} */
+
+.uline.rss {
+  float: left;
+  word-wrap: normal;
+  margin-left: 15px;;
+}
+
+li.listItem.rss {
+  margin-left: 20px;
+  text-align: left;
+  margin-bottom: 6px;
 }
 
 .header {
@@ -97,4 +114,15 @@ button {
   color: black;
   background-color: #FFFFFF;
   float: right;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+}
+
+#settingsBtn {
+  float: right;
+}
+
+label.preferedUnits, input.preferedUnits {
+  margin-left: 20px;
 }
