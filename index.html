@@ -15,6 +15,9 @@
   <button id="createWeatherBtn">New Weather</button>
   <button id="createRSSBtn">New RSS Feed</button>
   <button id="settingsBtn">Settings</button>
+  <button id="resetPositionBtn">Reset Positions</button>
+  
+  
 
   <!-- Create Weather Modal -->
   <div id="weather-modal" class="modal">
@@ -25,7 +28,7 @@
         <h2>Create New Weather Widget</h2>
       </div>
       <div>
-        <input type="text" id="weather-search-text" placeholder="City, Country Code">
+        <input type="text" id="weather-search-text" placeholder="City, Country Code" style="border: 1px solid black;">
         <button id="weather-search-submit"><i class="fa fa-search"></i></button>
       </div>
       <div id="citylist">
@@ -47,7 +50,7 @@
         <h2>Create New RSS Feed Widget</h2>
       </div>
       <div>
-        <input type="text" id="rss-input" placeholder="RSS Link">
+        <input type="text" id="rss-input" placeholder="RSS Link" style="border: 1px solid black;">
       </div>
       <div>
         <button id="add-rss-widget">Add RSS Feed Widget</button>
@@ -88,7 +91,9 @@
     
   </div>
 
-
+  <noscript>
+    Your browser does not support JavaScript!
+  </noscript>
   
 </body>
 <script src="feednami-client-v1.1.js"></script>

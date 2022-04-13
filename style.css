@@ -47,6 +47,8 @@ button {
   font-weight: bold;
 }
 
+
+
 .close:hover,
 .close:focus {
   color: black;
@@ -60,7 +62,7 @@ button {
   background-color: #ffffff;
   border: 1px solid #d3d3d3;
   /* text-align: center; */
-  width: fit-content;
+  /* width: fit-content; */
 }
 
 .content {
@@ -79,14 +81,19 @@ button {
   /* background-color: skyblue; */
 }
 
-/* .content.rss {
-  float: left;
-} */
+#resetPositionBtn {
+  float: right;
+}
+
+.master.rss, .header.rss {
+  min-width: 150px;
+}
 
 .uline.rss {
   float: left;
   word-wrap: normal;
-  margin-left: 15px;;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 li.listItem.rss {
@@ -102,7 +109,7 @@ li.listItem.rss {
   background-color: #8f8f8f;
   color: #fff;
   cursor: move;
-  width: fit-content;
+  /* width: fit-content; */
 }
 
 .cityname {
@@ -117,6 +124,7 @@ li.listItem.rss {
   width: 15px;
   height: 15px;
   text-align: center;
+  font-weight: bold;
 }
 
 #settingsBtn {

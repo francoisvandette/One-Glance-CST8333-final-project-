@@ -4,6 +4,7 @@ var settingsModal = document.getElementById("settings-modal");
 var weatherBtn = document.getElementById("createWeatherBtn");
 var rssBtn = document.getElementById("createRSSBtn");
 var settingsBtn = document.getElementById("settingsBtn");
+var resetPositionBtn = document.getElementById("resetPositionBtn");
 var saveSettings = document.getElementById("save-settings");
 var close = document.getElementsByClassName("close");
 var weatherSearchText = document.getElementById("weather-search-text");
@@ -16,7 +17,6 @@ var citydata;
 var form = document.getElementById("citylist-form");
 var createWeatherBtn = document.querySelector("#add-weather-widget");
 var timer;
-let rssData;
 var widgets = [];
 
 var settingsDefault = {
@@ -47,8 +47,12 @@ const units = {
 
 window.onload = function () {
 
-  // Gets any saved setting variables, if not, sets a default
+  // for testing purposes
+  let d = new Date();
+  let datetime = d.toLocaleString();
+  console.log("[started at]: " + datetime);
 
+  // Gets any saved setting variables, if not, sets a default
   if (localStorage.getItem("glanceSettings") == null) {
     localStorage.setItem("glanceSettings", JSON.stringify(settingsDefault));
     settings = settingsDefault;
@@ -101,6 +105,10 @@ function getLocalStorageWidgets() {
 // function just updates all the widgets
 function updateAllWidgets() {
 
+  let d = new Date();
+  let datetime = d.toLocaleString(); 
+  console.log("[refreshed at]: " + datetime);
+
   // loops through the widgets array, it should already exist from the window.onload above
   for (let i = 0; i < widgets.length; i++) {
 
@@ -128,6 +136,13 @@ function updateAllWidgets() {
 
 // Display Create Weather Modal
 weatherBtn.onclick = function () {
+  // delete existing list contents
+  while (form.firstChild) {
+    form.removeChild(form.lastChild);
+  }
+  // remove any text in the search bar
+  weatherSearchText.value = '';
+  // reveal modal
   weatherModal.style.display = "block";
 }
 
@@ -135,6 +150,7 @@ weatherBtn.onclick = function () {
 // Display Create RSS Modal
 rssBtn.onclick = function () {
   rssModal.style.display = "block";
+  rssInput.value = '';
 }
 
 
@@ -143,6 +159,26 @@ settingsBtn.onclick = function () {
   settingsModal.style.display = "block";
   loadExistingSettings();
 }
+
+
+// Resets the position of all the widgets to the default location
+resetPositionBtn.onclick = function () {
+  // grabs an array of all the widgets using the 'master' class
+  let masters = document.getElementsByClassName("master");
+  // loops through the 'masters' array and setting the top and left variables
+  for (let i = 0; i < masters.length; i++) {
+    masters[i].style.top = "50px";
+    masters[i].style.left = "10px";
+  }
+  // saving the new locations to the widgets array and into localStorage
+  for(let i = 0; i < widgets.length; i++) {
+    widgets[i].top = 50;
+    widgets[i].left = 10;
+    saveWidgets();
+  }
+}
+
+
 
 
 // Close Modals
@@ -563,7 +599,6 @@ function updateRssWidget(obj) {
   // grabbing the RSS data
   feednami.load(link)
     .then(data => {
-        rssData = data;
         rUpdate(data, obj);
   });
 
