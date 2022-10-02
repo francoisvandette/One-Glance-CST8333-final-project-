@@ -9,3 +9,7 @@ Weather information and location searching is done using OpenWeather APIs. The u
 RSS feeds must be acquired by the user. 
 
 Weather and RSS feed information, as well as widget positions, is stored in the browser.
+
+Currently hosted at the link below:
+https://fvand-aco.github.io/
+'fvand-aco' is the account I used for schoolwork.
